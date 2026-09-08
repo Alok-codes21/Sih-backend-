@@ -1,0 +1,401 @@
+{
+  "info": {
+    "name": "AthleteConnect (AthletIQ) - Complete Backend API Collection",
+    "_postman_id": "athleteconnect-sih-2026",
+    "description": "Comprehensive Postman API collection for AthleteConnect / AthletIQ backend for SIH 2026. Includes Auth, Athletes, Orgs, Opportunities, Matching, Jobs, Sponsorships, Training, Notifications, Uploads, Admin, and AI Gateway endpoints.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Authentication",
+      "item": [
+        {
+          "name": "Register Athlete",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"athlete.demo@example.com\",\n  \"password\": \"StrongPass123\",\n  \"firstName\": \"Neeraj\",\n  \"lastName\": \"Chopra\",\n  \"dateOfBirth\": \"2002-05-15\",\n  \"gender\": \"Male\",\n  \"sport\": [\"Athletics\", \"Javelin\"],\n  \"city\": \"Panipat\",\n  \"state\": \"Haryana\",\n  \"country\": \"India\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/register/athlete", "host": ["{{baseUrl}}"], "path": ["auth", "register", "athlete"] }
+          }
+        },
+        {
+          "name": "Register Organization",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"academy.demo@example.com\",\n  \"password\": \"StrongPass123\",\n  \"name\": \"National Sports Academy\",\n  \"type\": \"Academy\",\n  \"description\": \"State-of-the-art athletics training center\",\n  \"sports\": [\"Athletics\", \"Cricket\"],\n  \"city\": \"Delhi\",\n  \"state\": \"Delhi\",\n  \"country\": \"India\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/register/organization", "host": ["{{baseUrl}}"], "path": ["auth", "register", "organization"] }
+          }
+        },
+        {
+          "name": "Login User",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"athlete.demo@example.com\",\n  \"password\": \"StrongPass123\",\n  \"userType\": \"athlete\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] }
+          }
+        },
+        {
+          "name": "Get Current User (/me)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/auth/me", "host": ["{{baseUrl}}"], "path": ["auth", "me"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Athlete Profile & Achievements",
+      "item": [
+        {
+          "name": "Get Athlete Profile",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/athletes/:id", "host": ["{{baseUrl}}"], "path": ["athletes", ":id"] }
+          }
+        },
+        {
+          "name": "Update Athlete Profile & Stats",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bio\": \"National level javelin thrower aspiring for Olympic podium.\",\n  \"physicalStats\": {\n    \"height\": 1.82,\n    \"weight\": 78,\n    \"bmi\": 23.5\n  }\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/athletes/:id", "host": ["{{baseUrl}}"], "path": ["athletes", ":id"] }
+          }
+        },
+        {
+          "name": "Add Achievement & Certificate",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"National Junior Championship Gold Medal\",\n  \"level\": \"National\",\n  \"sport\": \"Athletics\",\n  \"year\": 2025,\n  \"certificateUrl\": \"https://res.cloudinary.com/demo/image/upload/sample_certificate.pdf\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/athletes/:id/achievements", "host": ["{{baseUrl}}"], "path": ["athletes", ":id", "achievements"] }
+          }
+        },
+        {
+          "name": "Get Athlete Dashboard Stats",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/athletes/:id/dashboard", "host": ["{{baseUrl}}"], "path": ["athletes", ":id", "dashboard"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Opportunities & Matching Engine",
+      "item": [
+        {
+          "name": "Create Opportunity (Org only)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Delhi State Athletics Selection Trial 2026\",\n  \"type\": \"Trial\",\n  \"sport\": [\"Athletics\"],\n  \"description\": \"State trials for selection in the National Games\",\n  \"eligibility\": {\n    \"minAge\": 16,\n    \"maxAge\": 24,\n    \"gender\": \"Any\",\n    \"requiredLevel\": \"District\",\n    \"states\": [\"Delhi\", \"Haryana\"]\n  },\n  \"deadline\": \"2026-11-15T23:59:59.000Z\",\n  \"location\": \"Jawaharlal Nehru Stadium, Delhi\",\n  \"monetaryBenefit\": 75000\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/opportunities", "host": ["{{baseUrl}}"], "path": ["opportunities"] }
+          }
+        },
+        {
+          "name": "Get All Opportunities (Search & Filter)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/opportunities?sport=Athletics", "host": ["{{baseUrl}}"], "path": ["opportunities"], "query": [{ "key": "sport", "value": "Athletics" }] }
+          }
+        },
+        {
+          "name": "Get Matched Feed (Calculated % Score)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/opportunities/matched", "host": ["{{baseUrl}}"], "path": ["opportunities", "matched"] }
+          }
+        },
+        {
+          "name": "Apply for Opportunity",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"coverLetter\": \"I have 4 years of track experience and state gold medal. Looking forward to trial.\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/opportunities/:id/apply", "host": ["{{baseUrl}}"], "path": ["opportunities", ":id", "apply"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Application Lifecycle",
+      "item": [
+        {
+          "name": "Get My Applications (Athlete)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/applications/my-applications", "host": ["{{baseUrl}}"], "path": ["applications", "my-applications"] }
+          }
+        },
+        {
+          "name": "Withdraw Application",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/applications/:id/withdraw", "host": ["{{baseUrl}}"], "path": ["applications", ":id", "withdraw"] }
+          }
+        },
+        {
+          "name": "Update Application Status (Org/Admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"Shortlisted\"\n}" },
+            "url": { "raw": "{{baseUrl}}/applications/:id/status", "host": ["{{baseUrl}}"], "path": ["applications", ":id", "status"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Sports Jobs & Sponsorships",
+      "item": [
+        {
+          "name": "Get Matched Jobs",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/jobs/matched", "host": ["{{baseUrl}}"], "path": ["jobs", "matched"] }
+          }
+        },
+        {
+          "name": "Get Matched Sponsorships",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/sponsorships/matched", "host": ["{{baseUrl}}"], "path": ["sponsorships", "matched"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Training & Recovery Data",
+      "item": [
+        {
+          "name": "Sync Wearable / Log Training",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sessions\": [\n    {\n      \"activityType\": \"Running\",\n      \"startTime\": \"2026-09-01T06:00:00Z\",\n      \"endTime\": \"2026-09-01T06:45:00Z\",\n      \"calories\": 420,\n      \"distance\": 8.5,\n      \"heartPoints\": 42\n    }\n  ],\n  \"sleepHours\": 8,\n  \"restingHeartRate\": 56\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/training/sync", "host": ["{{baseUrl}}"], "path": ["training", "sync"] }
+          }
+        },
+        {
+          "name": "Generate Training Plan",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sport\": \"Athletics\",\n  \"goal\": \"Sprint Endurance\",\n  \"age\": 21,\n  \"weight\": 75,\n  \"height\": 180\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/training/plan/generate", "host": ["{{baseUrl}}"], "path": ["training", "plan", "generate"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. AI Assistant & Exercise Form",
+      "item": [
+        {
+          "name": "AI Assistant Chat",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"message\": \"What is my training workout and eligible trials this week?\"\n}" },
+            "url": { "raw": "{{baseUrl}}/ai-assistant/chat", "host": ["{{baseUrl}}"], "path": ["ai-assistant", "chat"] }
+          }
+        },
+        {
+          "name": "Get AI Chat History",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/ai-assistant/history", "host": ["{{baseUrl}}"], "path": ["ai-assistant", "history"] }
+          }
+        },
+        {
+          "name": "Analyze Exercise Form",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"exerciseName\": \"Squats\",\n  \"videoUrl\": \"https://res.cloudinary.com/demo/video/upload/squat_test.mp4\"\n}" },
+            "url": { "raw": "{{baseUrl}}/exercise/analyze", "host": ["{{baseUrl}}"], "path": ["exercise", "analyze"] }
+          }
+        },
+        {
+          "name": "Get Exercise Form History",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/exercise/history", "host": ["{{baseUrl}}"], "path": ["exercise", "history"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. File Uploads (Cloudinary + Local)",
+      "item": [
+        {
+          "name": "Upload Media File",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "file", "type": "file", "src": "" },
+                { "key": "folder", "value": "certificates", "type": "text" }
+              ]
+            },
+            "url": { "raw": "{{baseUrl}}/upload/file", "host": ["{{baseUrl}}"], "path": ["upload", "file"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "9. In-App Notifications",
+      "item": [
+        {
+          "name": "Get User Notifications",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/notifications", "host": ["{{baseUrl}}"], "path": ["notifications"] }
+          }
+        },
+        {
+          "name": "Mark Single Notification Read",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/notifications/:id/read", "host": ["{{baseUrl}}"], "path": ["notifications", ":id", "read"] }
+          }
+        },
+        {
+          "name": "Mark All Notifications Read",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/notifications/read-all", "host": ["{{baseUrl}}"], "path": ["notifications", "read-all"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "10. Admin Governance",
+      "item": [
+        {
+          "name": "Get Platform Statistics",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/admin/stats", "host": ["{{baseUrl}}"], "path": ["admin", "stats"] }
+          }
+        },
+        {
+          "name": "Get All Users (Filter & Search)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/admin/users?role=athlete&status=ACTIVE", "host": ["{{baseUrl}}"], "path": ["admin", "users"] }
+          }
+        },
+        {
+          "name": "Update User Status (ACTIVE / SUSPENDED)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"SUSPENDED\",\n  \"role\": \"athlete\"\n}" },
+            "url": { "raw": "{{baseUrl}}/admin/users/:id/status", "host": ["{{baseUrl}}"], "path": ["admin", "users", ":id", "status"] }
+          }
+        },
+        {
+          "name": "Verify Organization Profile",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"isVerified\": true,\n  \"notes\": \"Official government recognized sports academy\"\n}" },
+            "url": { "raw": "{{baseUrl}}/admin/organizations/:orgId/verify", "host": ["{{baseUrl}}"], "path": ["admin", "organizations", ":orgId", "verify"] }
+          }
+        }
+      ]
+    }
+  ]
+}

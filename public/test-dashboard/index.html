@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AthleteConnect — Backend Test & Verification Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #070a13;
+      --surface: #0e1424;
+      --surface-card: #141c32;
+      --surface-hover: #1b2542;
+      --border: #233052;
+      --border-accent: #3b82f6;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --primary: #3b82f6;
+      --primary-glow: rgba(59, 130, 246, 0.25);
+      --green: #10b981;
+      --green-glow: rgba(16, 185, 129, 0.2);
+      --red: #ef4444;
+      --yellow: #f59e0b;
+      --purple: #8b5cf6;
+      --cyan: #06b6d4;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Outfit', system-ui, sans-serif;
+      min-height: 100vh;
+      padding: 24px 20px;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.08) 0%, transparent 40%);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Top banner */
+    .top-banner {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(139, 92, 246, 0.12));
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 28px 24px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+    .top-banner::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--cyan), var(--primary), var(--purple));
+    }
+    .top-banner h1 {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #60a5fa, #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 6px;
+    }
+    .top-banner p { color: var(--text-muted); font-size: 14px; }
+    .badge-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      font-size: 12px;
+      color: var(--cyan);
+      font-weight: 500;
+    }
+
+    /* Config and quick stats */
+    .controls-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      margin-bottom: 20px;
+    }
+    .url-input-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      min-width: 280px;
+    }
+    .url-input-group label {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .url-input-group input {
+      flex: 1;
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 8px 14px;
+      color: var(--text);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      outline: none;
+    }
+    .url-input-group input:focus { border-color: var(--primary); }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 18px;
+      border-radius: var(--radius-sm);
+      font-family: 'Outfit', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: white;
+      box-shadow: 0 4px 14px var(--primary-glow);
+    }
+    .btn-primary:hover { filter: brightness(1.15); transform: translateY(-1px); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .btn-success { background: var(--green); color: white; }
+    .btn-success:hover { filter: brightness(1.1); }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+    .btn-outline:hover { background: var(--surface-hover); border-color: var(--primary); }
+
+    /* Nav Tabs */
+    .tabs-nav {
+      display: flex;
+      gap: 8px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+    .tab-btn {
+      padding: 10px 18px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+
+    /* Tab content */
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: fadeIn 0.25s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Stats summary */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      text-align: center;
+    }
+    .stat-card .num { font-size: 28px; font-weight: 800; font-family: 'JetBrains Mono', monospace; }
+    .stat-card .label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+    .stat-card.green .num { color: var(--green); }
+    .stat-card.red .num { color: var(--red); }
+    .stat-card.blue .num { color: var(--primary); }
+    .stat-card.purple .num { color: var(--purple); }
+
+    /* Test List Accordion */
+    .test-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      margin-bottom: 12px;
+      overflow: hidden;
+      transition: all 0.2s;
+    }
+    .test-card.pass { border-left: 4px solid var(--green); }
+    .test-card.fail { border-left: 4px solid var(--red); }
+    .test-card.running { border-left: 4px solid var(--cyan); }
+    .test-card.pending { border-left: 4px solid var(--yellow); }
+
+    .test-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      cursor: pointer;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+    .test-header:hover { background: var(--surface-hover); }
+    .test-meta { display: flex; align-items: center; gap: 10px; }
+    .method-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    .method-GET { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+    .method-POST { background: rgba(59, 130, 246, 0.15); color: #fa60c1; }
+    .method-PATCH { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+    .method-DELETE { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+
+    .test-title { font-weight: 600; font-size: 14px; }
+    .test-status {
+      font-size: 12px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .test-body {
+      display: none;
+      padding: 16px 18px;
+      background: var(--surface-card);
+      border-top: 1px solid var(--border);
+    }
+    .test-body.open { display: block; }
+    .endpoint-pill {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--cyan);
+      background: var(--bg);
+      padding: 6px 12px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+    pre {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: #94a3b8;
+      overflow-x: auto;
+      max-height: 250px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    /* Interactive Forms */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+    }
+    .interactive-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 22px;
+    }
+    .interactive-card h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 14px;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .input-field {
+      margin-bottom: 12px;
+    }
+    .input-field label {
+      display: block;
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+    .input-field input, .input-field select, .input-field textarea {
+      width: 100%;
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
+      color: var(--text);
+      font-family: 'Outfit', sans-serif;
+      font-size: 13px;
+      outline: none;
+    }
+    .input-field input:focus, .input-field select:focus, .input-field textarea:focus {
+      border-color: var(--primary);
+    }
+    .input-field textarea { resize: vertical; min-height: 60px; }
+
+    .result-box {
+      margin-top: 14px;
+      padding: 12px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      max-height: 200px;
+      overflow-y: auto;
+      color: #94a3b8;
+    }
+
+    /* Chat bubble UI */
+    .chat-container {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      height: 520px;
+    }
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding-right: 8px;
+      margin-bottom: 16px;
+    }
+    .chat-msg {
+      max-width: 80%;
+      padding: 12px 16px;
+      border-radius: 14px;
+      font-size: 13px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+    .chat-msg.user {
+      align-self: flex-end;
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: white;
+    }
+    .chat-msg.bot {
+      align-self: flex-start;
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+    .chat-meta {
+      font-size: 11px;
+      color: var(--cyan);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .chat-input-bar {
+      display: flex;
+      gap: 10px;
+    }
+    .chat-input-bar input {
+      flex: 1;
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      color: var(--text);
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      outline: none;
+    }
+
+    /* Handover Guide Card */
+    .handover-card {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(59, 130, 246, 0.08));
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      margin-top: 24px;
+    }
+    .handover-card h2 {
+      font-size: 18px;
+      color: var(--green);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .handover-step {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .handover-step .step-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+    .handover-step .step-text { font-size: 13px; line-height: 1.6; color: var(--text-muted); }
+    .handover-step code {
+      background: var(--surface-card);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--cyan);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Loading spinner */
+    .spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid var(--border);
+      border-top-color: var(--cyan);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Header -->
+  <div class="top-banner">
+    <h1>🏆 AthleteConnect — Backend Test & Verification Dashboard</h1>
+    <p>Comprehensive, interactive testing suite for all 7 platform features and core APIs.</p>
+    <div class="badge-bar">
+      <span class="badge">🚀 Live Backend Connected</span>
+      <span class="badge">🔒 JWT Role-Based Auth</span>
+      <span class="badge">🧠 AI Multi-Agent Router</span>
+      <span class="badge">📦 100% Removable (`public/test-dashboard`)</span>
+    </div>
+  </div>
+
+  <!-- Controls Bar -->
+  <div class="controls-bar">
+    <div class="url-input-group">
+      <label>Server Base URL:</label>
+      <input type="text" id="baseUrl" value="http://localhost:3000">
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <button class="btn btn-primary" id="runAllBtn" onclick="runAutomatedSuite()">▶ Run All 20+ Tests</button>
+      <button class="btn btn-outline" onclick="pingHealth()">♥ Ping Server</button>
+    </div>
+  </div>
+
+  <!-- Navigation Tabs -->
+  <div class="tabs-nav">
+    <button class="tab-btn active" onclick="switchTab('suite')">🧪 Automated Test Suite</button>
+    <button class="tab-btn" onclick="switchTab('auth')">👤 Auth & Profiles</button>
+    <button class="tab-btn" onclick="switchTab('listings')">🏆 Opportunities, Jobs & Sponsors</button>
+    <button class="tab-btn" onclick="switchTab('training')">⌚ Training & Wearables</button>
+    <button class="tab-btn" onclick="switchTab('exercise')">🎥 Exercise Form</button>
+    <button class="tab-btn" onclick="switchTab('assistant')">🤖 Multi-Agent AI Assistant</button>
+    <button class="tab-btn" onclick="switchTab('handover')">📦 Team Handover Guide</button>
+  </div>
+
+  <!-- TAB 1: Automated Test Suite -->
+  <div id="tab-suite" class="tab-content active">
+    <div class="stats-grid">
+      <div class="stat-card green"><div class="num" id="statPassed">0</div><div class="label">Passed</div></div>
+      <div class="stat-card red"><div class="num" id="statFailed">0</div><div class="label">Failed</div></div>
+      <div class="stat-card blue"><div class="num" id="statTotal">0</div><div class="label">Total Tests</div></div>
+      <div class="stat-card purple"><div class="num" id="statTime">0ms</div><div class="label">Duration</div></div>
+    </div>
+    <div id="testCardsContainer"></div>
+  </div>
+
+  <!-- TAB 2: Auth & Profiles -->
+  <div id="tab-auth" class="tab-content">
+    <div class="form-grid">
+      <!-- Athlete Register -->
+      <div class="interactive-card">
+        <h3>🏃 Register New Athlete</h3>
+        <div class="input-field"><label>Email</label><input type="email" id="athEmail" value="neeraj.athlete@sports.in"></div>
+        <div class="input-field"><label>Password</label><input type="password" id="athPass" value="StrongPass123"></div>
+        <div class="input-field"><label>First Name</label><input type="text" id="athFirst" value="Neeraj"></div>
+        <div class="input-field"><label>Last Name</label><input type="text" id="athLast" value="Chopra"></div>
+        <div class="input-field"><label>Sport (comma separated)</label><input type="text" id="athSport" value="Athletics, Javelin"></div>
+        <div class="input-field"><label>State</label><input type="text" id="athState" value="Haryana"></div>
+        <button class="btn btn-primary" onclick="handleRegisterAthlete()">Register Athlete</button>
+        <div class="result-box" id="resAthleteReg">Output will appear here...</div>
+      </div>
+
+      <!-- Org Register -->
+      <div class="interactive-card">
+        <h3>🏢 Register Organization</h3>
+        <div class="input-field"><label>Email</label><input type="email" id="orgEmail" value="contact@olympicsacademy.org"></div>
+        <div class="input-field"><label>Password</label><input type="password" id="orgPass" value="StrongPass123"></div>
+        <div class="input-field"><label>Organization Name</label><input type="text" id="orgName" value="National Sports Academy"></div>
+        <div class="input-field"><label>Type</label>
+          <select id="orgType">
+            <option>Academy</option>
+            <option>Federation</option>
+            <option>College</option>
+            <option>Company</option>
+          </select>
+        </div>
+        <div class="input-field"><label>Sports</label><input type="text" id="orgSports" value="Athletics, Cricket, Badminton"></div>
+        <button class="btn btn-primary" onclick="handleRegisterOrg()">Register Organization</button>
+        <div class="result-box" id="resOrgReg">Output will appear here...</div>
+      </div>
+
+      <!-- Login -->
+      <div class="interactive-card">
+        <h3>🔑 Login Authentication</h3>
+        <div class="input-field"><label>User Type</label>
+          <select id="loginType">
+            <option value="athlete">Athlete</option>
+            <option value="organization">Organization</option>
+          </select>
+        </div>
+        <div class="input-field"><label>Email</label><input type="email" id="loginEmail" value="neeraj.athlete@sports.in"></div>
+        <div class="input-field"><label>Password</label><input type="password" id="loginPass" value="StrongPass123"></div>
+        <button class="btn btn-primary" onclick="handleLogin()">Login & Save Token</button>
+        <div class="result-box" id="resLogin">Output will appear here...</div>
+      </div>
+
+      <!-- Athlete Profile Stats -->
+      <div class="interactive-card">
+        <h3>📊 Physical Stats & Achievements</h3>
+        <div class="input-field"><label>Height (cm)</label><input type="number" id="statHeight" value="180"></div>
+        <div class="input-field"><label>Weight (kg)</label><input type="number" id="statWeight" value="75"></div>
+        <button class="btn btn-primary" onclick="handleUpdateStats()">Update Physical Stats</button>
+        <div style="margin-top: 12px;"></div>
+        <div class="input-field"><label>Achievement Title</label><input type="text" id="achTitle" value="National Gold Medalist 2025"></div>
+        <div class="input-field"><label>Level</label>
+          <select id="achLevel">
+            <option>District</option>
+            <option>State</option>
+            <option selected>National</option>
+            <option>International</option>
+          </select>
+        </div>
+        <button class="btn btn-outline" onclick="handleAddAchievement()">Add Achievement</button>
+        <div class="result-box" id="resStats">Output will appear here...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 3: Opportunities, Jobs & Sponsors -->
+  <div id="tab-listings" class="tab-content">
+    <div class="form-grid">
+      <!-- Create Opportunity -->
+      <div class="interactive-card">
+        <h3>🏆 Post New Opportunity (Org)</h3>
+        <div class="input-field"><label>Title</label><input type="text" id="oppTitle" value="National Javelin Camp 2026"></div>
+        <div class="input-field"><label>Type</label><select id="oppType"><option>Camp</option><option>Trial</option><option>Tournament</option><option>Scholarship</option></select></div>
+        <div class="input-field"><label>Sport</label><input type="text" id="oppSport" value="Athletics"></div>
+        <div class="input-field"><label>Monetary Benefit (INR)</label><input type="number" id="oppBenefit" value="75000"></div>
+        <button class="btn btn-primary" onclick="handleCreateOpp()">Post Opportunity</button>
+        <div class="result-box" id="resCreateOpp">Output will appear here...</div>
+      </div>
+
+      <!-- Match Opportunities -->
+      <div class="interactive-card">
+        <h3>🎯 AI Auto-Match for Athlete</h3>
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">Uses multi-factor scoring (Sport: 40%, Age: 20%, Level: 20%, Location: 10%, Deadline: 10%).</p>
+        <button class="btn btn-success" onclick="handleGetMatched('opportunities')">Get Matched Opportunities</button>
+        <button class="btn btn-outline" style="margin-left: 6px;" onclick="handleGetMatched('jobs')">Matched Jobs</button>
+        <button class="btn btn-outline" style="margin-left: 6px;" onclick="handleGetMatched('sponsorships')">Matched Sponsorships</button>
+        <div class="result-box" id="resMatchList">Click one of the buttons above to query AI matching engine...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 4: Training & Wearables -->
+  <div id="tab-training" class="tab-content">
+    <div class="form-grid">
+      <!-- Manual Workout Entry -->
+      <div class="interactive-card">
+        <h3>🏃 Log Manual Workout Session</h3>
+        <div class="input-field"><label>Activity</label><input type="text" id="workActivity" value="Running"></div>
+        <div class="input-field"><label>Duration (min)</label><input type="number" id="workDuration" value="45"></div>
+        <div class="input-field"><label>Distance (km)</label><input type="number" id="workDistance" value="6.5"></div>
+        <div class="input-field"><label>Calories</label><input type="number" id="workCalories" value="480"></div>
+        <div class="input-field"><label>Avg Heart Rate (BPM)</label><input type="number" id="workHeartRate" value="155"></div>
+        <div class="input-field"><label>Intensity</label>
+          <select id="workIntensity">
+            <option>Low</option>
+            <option selected>Medium</option>
+            <option>High</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" onclick="handleLogWorkout()">Log Session</button>
+        <button class="btn btn-outline" style="margin-left: 6px;" onclick="handleGetSessions()">Get Past Sessions</button>
+        <div class="result-box" id="resWorkLog">Output will appear here...</div>
+      </div>
+
+      <!-- Training Dashboard & Recovery -->
+      <div class="interactive-card">
+        <h3>📊 Training Dashboard & Recovery Intelligence</h3>
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">Fetches 6 weekly training metrics and computes consecutive high-load recovery alerts.</p>
+        <button class="btn btn-success" onclick="handleGetDashboardMetrics()">Get 6-Metric Dashboard</button>
+        <button class="btn btn-primary" style="margin-left: 6px;" onclick="handleGetRecoveryStatus()">Analyze Recovery Status</button>
+        <div class="result-box" id="resDashboardMetrics">Output will appear here...</div>
+      </div>
+
+      <!-- Wearable Sync -->
+      <div class="interactive-card">
+        <h3>⌚ Wearable Data Sync (Google Fit format)</h3>
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">Parses raw activity sessions, computes heart points, duration & calories burned.</p>
+        <button class="btn btn-primary" onclick="handleSyncWearable()">Sync Wearable Session</button>
+        <div class="result-box" id="resWearable">Output will appear here...</div>
+      </div>
+
+      <!-- AI Training Plan -->
+      <div class="interactive-card">
+        <h3>📋 AI Training Plan Generator</h3>
+        <div class="input-field"><label>Sport</label><input type="text" id="planSport" value="Athletics"></div>
+        <div class="input-field"><label>Goal</label><input type="text" id="planGoal" value="Explosive Sprint Speed & Agility"></div>
+        <div class="input-field"><label>Athlete Weight (kg)</label><input type="number" id="planWeight" value="75"></div>
+        <button class="btn btn-success" onclick="handleGeneratePlan()">Generate 7-Day Plan</button>
+        <div class="result-box" id="resPlan">Output will appear here...</div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- TAB 5: Exercise Form Correction -->
+  <div id="tab-exercise" class="tab-content">
+    <div class="form-grid">
+      <!-- Exercise DB -->
+      <div class="interactive-card">
+        <h3>📚 Exercise Library</h3>
+        <button class="btn btn-outline" onclick="handleGetExerciseDb()">Load Exercise Library</button>
+        <div class="result-box" id="resExDb">Click to load exercise reference database...</div>
+      </div>
+
+      <!-- Form Analysis -->
+      <div class="interactive-card">
+        <h3>🎥 Exercise Form Analysis & AI Feedback</h3>
+        <div class="input-field"><label>Exercise</label>
+          <select id="exName">
+            <option>Squats</option>
+            <option>Deadlifts</option>
+            <option>Push-ups</option>
+          </select>
+        </div>
+        <div class="input-field"><label>Form Score (0-100)</label><input type="number" id="exScore" value="76"></div>
+        <button class="btn btn-primary" onclick="handleAnalyzeExercise()">Run Form Analysis</button>
+        <div class="result-box" id="resExAnalyze">Output will appear here...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 6: Multi-Agent AI Assistant -->
+  <div id="tab-assistant" class="tab-content">
+    <div class="chat-container">
+      <div class="chat-messages" id="chatMessages">
+        <div class="chat-msg bot">
+          <div class="chat-meta">🤖 Multi-Agent AI Assistant</div>
+          Hello! I am your AI sports assistant with specialized sub-agents:
+          • <strong>Training Coach Agent</strong> (workouts, routines, recovery)
+          • <strong>Nutritionist Agent</strong> (diet, macros, calories, hydration)
+          • <strong>Career Advisor Agent</strong> (opportunities, sponsorships, trials)
+          
+          Ask me anything!
+        </div>
+      </div>
+      <div class="chat-input-bar">
+        <input type="text" id="chatInput" placeholder="e.g., How should I prepare for a 100m sprint competition?" onkeydown="if(event.key==='Enter') sendChatMessage()">
+        <button class="btn btn-primary" onclick="sendChatMessage()">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 7: Handover Guide -->
+  <div id="tab-handover" class="tab-content">
+    <div class="handover-card">
+      <h2>📦 How to Hand Off to Frontend Team / Remove Test UI</h2>
+      <div class="handover-step">
+        <div class="step-num">1</div>
+        <div class="step-text">
+          <strong>Delete the Test Dashboard files</strong><br>
+          Delete the entire directory: <code>public/test-dashboard/</code>
+        </div>
+      </div>
+      <div class="handover-step">
+        <div class="step-num">2</div>
+        <div class="step-text">
+          <strong>Clean up 2 lines in <code>app.js</code></strong><br>
+          Remove lines 52-54 in <code>app.js</code>:
+          <pre style="margin-top: 6px;">app.use('/test-dashboard', express.static('public/test-dashboard'));
+app.get('/', (req, res) => res.redirect('/test-dashboard/'));</pre>
+        </div>
+      </div>
+      <div class="handover-step">
+        <div class="step-num">3</div>
+        <div class="step-text">
+          <strong>Connect Your Production Frontend</strong><br>
+          Point your frontend (React, Next.js, Vue, Mobile App, etc.) to <code>http://localhost:3000/api/v1/</code>.<br>
+          Set <code>CORS_ORIGIN=http://localhost:5173</code> (or your frontend's port) in your <code>.env</code> file.
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const BASE = () => document.getElementById('baseUrl').value.replace(/\/+$/, '');
+let activeToken = localStorage.getItem('token') || '';
+let athleteToken = '';
+let orgToken = '';
+let savedAthleteId = '';
+let savedOrgId = '';
+let savedOppId = '';
+
+const uid = () => Math.random().toString(36).substring(2, 8);
+
+// Tab switching
+function switchTab(tabId) {
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  
+  event.target.classList.add('active');
+  const target = document.getElementById('tab-' + tabId);
+  if (target) target.classList.add('active');
+}
+
+// API Helper
+async function apiCall(method, path, body, token) {
+  const headers = { 'Content-Type': 'application/json' };
+  const auth = token || activeToken;
+  if (auth) headers['Authorization'] = `Bearer ${auth}`;
+
+  const opts = { method, headers };
+  if (body && method !== 'GET') opts.body = JSON.stringify(body);
+
+  const res = await fetch(BASE() + path, opts);
+  const data = await res.json();
+  return { status: res.status, data };
+}
+
+async function pingHealth() {
+  try {
+    const res = await apiCall('GET', '/api/v1/health');
+    alert('✅ Backend Health OK!\n' + JSON.stringify(res.data, null, 2));
+  } catch (e) {
+    alert('❌ Could not connect to backend at ' + BASE() + '\nError: ' + e.message);
+  }
+}
+
+// ── Interactive Form Handlers ─────────────────────────────────────
+async function handleRegisterAthlete() {
+  const email = document.getElementById('athEmail').value;
+  const password = document.getElementById('athPass').value;
+  const firstName = document.getElementById('athFirst').value;
+  const lastName = document.getElementById('athLast').value;
+  const sport = document.getElementById('athSport').value.split(',').map(s => s.trim());
+  const state = document.getElementById('athState').value;
+
+  const res = await apiCall('POST', '/api/v1/auth/register/athlete', {
+    email, password, firstName, lastName, dateOfBirth: '2001-05-15', gender: 'Male', sport, state, city: 'City', country: 'India'
+  });
+  document.getElementById('resAthleteReg').textContent = JSON.stringify(res.data, null, 2);
+  if (res.data.data?.token) {
+    activeToken = res.data.data.token;
+    athleteToken = activeToken;
+    savedAthleteId = res.data.data.athlete._id;
+  }
+}
+
+async function handleRegisterOrg() {
+  const email = document.getElementById('orgEmail').value;
+  const password = document.getElementById('orgPass').value;
+  const name = document.getElementById('orgName').value;
+  const type = document.getElementById('orgType').value;
+  const sports = document.getElementById('orgSports').value.split(',').map(s => s.trim());
+
+  const res = await apiCall('POST', '/api/v1/auth/register/organization', {
+    email, password, name, type, description: 'Sports Organization', sports, city: 'City', state: 'State', country: 'India'
+  });
+  document.getElementById('resOrgReg').textContent = JSON.stringify(res.data, null, 2);
+  if (res.data.data?.token) {
+    orgToken = res.data.data.token;
+    savedOrgId = res.data.data.organization._id;
+  }
+}
+
+async function handleLogin() {
+  const userType = document.getElementById('loginType').value;
+  const email = document.getElementById('loginEmail').value;
+  const password = document.getElementById('loginPass').value;
+
+  const res = await apiCall('POST', '/api/v1/auth/login', { userType, email, password });
+  document.getElementById('resLogin').textContent = JSON.stringify(res.data, null, 2);
+  if (res.data.data?.token) {
+    activeToken = res.data.data.token;
+    if (userType === 'athlete') athleteToken = activeToken;
+    else orgToken = activeToken;
+  }
+}
+
+async function handleUpdateStats() {
+  if (!savedAthleteId) {
+    alert('Please register or login as an athlete first!');
+    return;
+  }
+  const height = parseFloat(document.getElementById('statHeight').value);
+  const weight = parseFloat(document.getElementById('statWeight').value);
+
+  const res = await apiCall('PATCH', `/api/v1/athletes/${savedAthleteId}`, {
+    physicalStats: { height, weight, bmi: parseFloat((weight / ((height/100)*(height/100))).toFixed(1)) }
+  }, athleteToken);
+  document.getElementById('resStats').textContent = JSON.stringify(res.data, null, 2);
+}
+
+async function handleAddAchievement() {
+  if (!savedAthleteId) {
+    alert('Please register or login as an athlete first!');
+    return;
+  }
+  const title = document.getElementById('achTitle').value;
+  const level = document.getElementById('achLevel').value;
+
+  const res = await apiCall('POST', `/api/v1/athletes/${savedAthleteId}/achievements`, {
+    title, level, sport: 'Athletics', date: new Date().toISOString()
+  }, athleteToken);
+  document.getElementById('resStats').textContent = JSON.stringify(res.data, null, 2);
+}
+
+async function handleCreateOpp() {
+  const title = document.getElementById('oppTitle').value;
+  const type = document.getElementById('oppType').value;
+  const sport = [document.getElementById('oppSport').value];
+  const monetaryBenefit = parseFloat(document.getElementById('oppBenefit').value);
+
+  const res = await apiCall('POST', '/api/v1/opportunities', {
+    title, type, sport, description: 'Official selection opportunity',
+    eligibility: { minAge: 16, maxAge: 30, requiredLevel: 'District', states: [] },
+    deadline: new Date(Date.now() + 60 * 86400000).toISOString(),
+    monetaryBenefit
+  }, orgToken);
+  document.getElementById('resCreateOpp').textContent = JSON.stringify(res.data, null, 2);
+  if (res.data.data?._id) savedOppId = res.data.data._id;
+}
+
+async function handleGetMatched(type) {
+  const res = await apiCall('GET', `/api/v1/${type}/matched`, null, athleteToken);
+  document.getElementById('resMatchList').textContent = JSON.stringify(res.data, null, 2);
+}
+
+async function handleLogWorkout() {
+  const activity = document.getElementById('workActivity').value;
+  const duration = parseFloat(document.getElementById('workDuration').value);
+  const distance = parseFloat(document.getElementById('workDistance').value);
+  const calories = parseFloat(document.getElementById('workCalories').value);
+  const heartRate = parseFloat(document.getElementById('workHeartRate').value);
+  const intensity = document.getElementById('workIntensity').value;
+
+  const res = await apiCall('POST', '/api/v1/training', {
+    activity, duration, distance, calories, heartRate, intensity
+  }, athleteToken);
+  document.getElementById('resWorkLog').textContent = JSON.stringify(res.data, null, 2);
+}
+
+async function handleGetSessions() {
+  const res = await apiCall('GET', '/api/v1/training', null, athleteToken);
+  document.getElementById('resWorkLog').textContent = JSON.stringify(res.data, null, 2);
+}
+
+async function handleGetDashboardMetrics() {
+  const res = await apiCall('GET', '/api/v1/training/dashboard', null, athleteToken);
+  document.getElementById('resDashboardMetrics').textContent = JSON.stringify(res.data, null, 2);
+}
+
+async function handleGetRecoveryStatus() {
+  const res = await apiCall('GET', '/api/v1/training/recovery', null, athleteToken);
+  document.getElementById('resDashboardMetrics').textContent = JSON.stringify(res.data, null, 2);
+}
+
+async function handleSyncWearable() {
+
+  const res = await apiCall('POST', '/api/v1/training/sync', {
+    source: 'GoogleFit',
+    sessions: [
+      { activityType: 'Sprint Drills', startTime: '2026-08-31T06:00:00Z', endTime: '2026-08-31T06:45:00Z', calories: 450, distance: 4.5, heartPoints: 40 },
+      { activityType: 'Core Conditioning', startTime: '2026-08-31T07:00:00Z', endTime: '2026-08-31T07:30:00Z', calories: 250, distance: 0, heartPoints: 20 }
+    ]
+  }, athleteToken);
+  document.getElementById('resWearable').textContent = JSON.stringify(res.data, null, 2);
+}
+
+async function handleGeneratePlan() {
+  const sport = document.getElementById('planSport').value;
+  const goal = document.getElementById('planGoal').value;
+  const weight = parseFloat(document.getElementById('planWeight').value);
+
+  const res = await apiCall('POST', '/api/v1/training/plan', {
+    sport, goal, weight, height: 180, age: 22
+  }, athleteToken);
+  document.getElementById('resPlan').textContent = JSON.stringify(res.data, null, 2);
+}
+
+async function handleGetExerciseDb() {
+  const res = await apiCall('GET', '/api/v1/exercise/database', null, athleteToken);
+  document.getElementById('resExDb').textContent = JSON.stringify(res.data, null, 2);
+}
+
+async function handleAnalyzeExercise() {
+  const exerciseName = document.getElementById('exName').value;
+  const formScore = parseInt(document.getElementById('exScore').value, 10);
+
+  const res = await apiCall('POST', '/api/v1/exercise/analyze', {
+    exerciseName, formScore
+  }, athleteToken);
+  document.getElementById('resExAnalyze').textContent = JSON.stringify(res.data, null, 2);
+}
+
+async function sendChatMessage() {
+  const input = document.getElementById('chatInput');
+  const msg = input.value.trim();
+  if (!msg) return;
+
+  const chatContainer = document.getElementById('chatMessages');
+  
+  // User message
+  const userDiv = document.createElement('div');
+  userDiv.className = 'chat-msg user';
+  userDiv.textContent = msg;
+  chatContainer.appendChild(userDiv);
+  input.value = '';
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+
+  // Bot loading
+  const botDiv = document.createElement('div');
+  botDiv.className = 'chat-msg bot';
+  botDiv.innerHTML = '<span class="spinner"></span> Routing to AI specialist...';
+  chatContainer.appendChild(botDiv);
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+
+  const res = await apiCall('POST', '/api/v1/ai-assistant/chat', { message: msg }, athleteToken);
+  
+  if (res.data.success) {
+    const data = res.data.data;
+    botDiv.innerHTML = `
+      <div class="chat-meta">🤖 ${data.routedTo} (${data.confidence} confidence)</div>
+      ${data.response}
+    `;
+  } else {
+    botDiv.textContent = '❌ Error: ' + (res.data.error || 'Failed to get response');
+  }
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+
+// ── Automated Test Definitions ────────────────────────────────────
+const TEST_DEFINITIONS = [
+  {
+    id: 't-health', name: '1. API Health Check', method: 'GET', path: '/api/v1/health',
+    action: async () => apiCall('GET', '/api/v1/health'),
+    validate: r => r.status === 200 && r.data?.status === 'ok'
+  },
+  {
+    id: 't-reg-ath', name: '2. Register Athlete (Auth)', method: 'POST', path: '/api/v1/auth/register/athlete',
+    action: async () => {
+      const email = `athlete.${uid()}@sports.in`;
+      const res = await apiCall('POST', '/api/v1/auth/register/athlete', {
+        email, password: 'StrongPassword123', firstName: 'Neeraj', lastName: 'Chopra',
+        dateOfBirth: '2002-05-15', gender: 'Male', sport: ['Athletics', 'Javelin'],
+        city: 'Panipat', state: 'Haryana', country: 'India'
+      });
+      if (res.data.data?.token) athleteToken = res.data.data.token;
+      if (res.data.data?.athlete?._id) savedAthleteId = res.data.data.athlete._id;
+      return res;
+    },
+    validate: r => r.status === 201 && r.data?.success && r.data?.data?.token
+  },
+  {
+    id: 't-reg-org', name: '3. Register Organization (Auth)', method: 'POST', path: '/api/v1/auth/register/organization',
+    action: async () => {
+      const email = `org.${uid()}@sports.org`;
+      const res = await apiCall('POST', '/api/v1/auth/register/organization', {
+        email, password: 'StrongPassword123', name: 'Haryana Sports Authority',
+        type: 'Federation', description: 'Apex Sports Federation', sports: ['Athletics', 'Cricket'],
+        city: 'Chandigarh', state: 'Haryana', country: 'India'
+      });
+      if (res.data.data?.token) orgToken = res.data.data.token;
+      if (res.data.data?.organization?._id) savedOrgId = res.data.data.organization._id;
+      return res;
+    },
+    validate: r => r.status === 201 && r.data?.success && r.data?.data?.token
+  },
+  {
+    id: 't-get-ath', name: '4. Get Athlete Profile', method: 'GET', path: '/api/v1/athletes/:id',
+    action: async () => apiCall('GET', `/api/v1/athletes/${savedAthleteId}`, null, athleteToken),
+    validate: r => r.status === 200 && r.data?.data?.firstName === 'Neeraj'
+  },
+  {
+    id: 't-upd-ath', name: '5. Update Physical Stats', method: 'PATCH', path: '/api/v1/athletes/:id',
+    action: async () => apiCall('PATCH', `/api/v1/athletes/${savedAthleteId}`, {
+      physicalStats: { height: 182, weight: 78, bmi: 23.5 }
+    }, athleteToken),
+    validate: r => r.status === 200 && r.data?.success
+  },
+  {
+    id: 't-add-ach', name: '6. Add Athlete Achievement', method: 'POST', path: '/api/v1/athletes/:id/achievements',
+    action: async () => apiCall('POST', `/api/v1/athletes/${savedAthleteId}/achievements`, {
+      title: 'National Gold 2025', level: 'National', sport: 'Javelin', date: new Date().toISOString()
+    }, athleteToken),
+    validate: r => r.status === 201 && r.data?.data?.title === 'National Gold 2025'
+  },
+  {
+    id: 't-ath-dash', name: '7. Athlete Dashboard Stats', method: 'GET', path: '/api/v1/athletes/:id/dashboard',
+    action: async () => apiCall('GET', `/api/v1/athletes/${savedAthleteId}/dashboard`, null, athleteToken),
+    validate: r => r.status === 200 && r.data?.data?.achievementsCount !== undefined
+  },
+  {
+    id: 't-create-opp', name: '8. Post Opportunity (Feature 1)', method: 'POST', path: '/api/v1/opportunities',
+    action: async () => {
+      const res = await apiCall('POST', '/api/v1/opportunities', {
+        title: 'National Athletics Trials 2026', type: 'Trial', sport: ['Athletics'],
+        description: 'Championship trials',
+        eligibility: { minAge: 18, maxAge: 28, requiredLevel: 'District', states: ['Haryana'] },
+        deadline: new Date(Date.now() + 45 * 86400000).toISOString(),
+        location: 'Panipat', monetaryBenefit: 50000
+      }, orgToken);
+      if (res.data.data?._id) savedOppId = res.data.data._id;
+      return res;
+    },
+    validate: r => r.status === 201 && r.data?.data?.title
+  },
+  {
+    id: 't-match-opp', name: '9. AI Opportunity Matcher', method: 'GET', path: '/api/v1/opportunities/matched',
+    action: async () => apiCall('GET', '/api/v1/opportunities/matched', null, athleteToken),
+    validate: r => r.status === 200 && Array.isArray(r.data?.data)
+  },
+  {
+    id: 't-apply-opp', name: '10. Apply to Opportunity', method: 'POST', path: '/api/v1/opportunities/:id/apply',
+    action: async () => apiCall('POST', `/api/v1/opportunities/${savedOppId}/apply`, {
+      coverLetter: 'Ready for the trial'
+    }, athleteToken),
+    validate: r => r.status === 201 && (r.data?.data?.status === 'Applied' || r.data?.data?.status === 'pending' || r.data?.data?.applicationId)
+  },
+  {
+    id: 't-create-job', name: '11. Post Sports Job (Feature 2)', method: 'POST', path: '/api/v1/jobs',
+    action: async () => apiCall('POST', '/api/v1/jobs', {
+      title: 'Assistant Athletics Coach', sport: ['Athletics'], type: 'Part-time',
+      salary: { min: 20000, max: 35000, currency: 'INR' },
+      eligibility: { minAge: 20, maxAge: 35, requiredLevel: 'State' },
+      deadline: new Date(Date.now() + 30 * 86400000).toISOString()
+    }, orgToken),
+    validate: r => r.status === 201 && r.data?.data?.title
+  },
+  {
+    id: 't-match-job', name: '12. AI Sports Job Matcher', method: 'GET', path: '/api/v1/jobs/matched',
+    action: async () => apiCall('GET', '/api/v1/jobs/matched', null, athleteToken),
+    validate: r => r.status === 200 && Array.isArray(r.data?.data)
+  },
+  {
+    id: 't-create-sp', name: '13. Post Sponsorship (Feature 3)', method: 'POST', path: '/api/v1/sponsorships',
+    action: async () => apiCall('POST', '/api/v1/sponsorships', {
+      title: 'Red Bull Athlete Scholarship', sport: ['Athletics'], amount: 500000,
+      eligibility: { minAge: 18, maxAge: 28, requiredLevel: 'National' },
+      deadline: new Date(Date.now() + 90 * 86400000).toISOString()
+    }, orgToken),
+    validate: r => r.status === 201 && r.data?.data?.title
+  },
+  {
+    id: 't-match-sp', name: '14. AI Sponsorship Matcher', method: 'GET', path: '/api/v1/sponsorships/matched',
+    action: async () => apiCall('GET', '/api/v1/sponsorships/matched', null, athleteToken),
+    validate: r => r.status === 200 && Array.isArray(r.data?.data)
+  },
+  {
+    id: 't-sync-wear', name: '15. Wearable Sync (Feature 4)', method: 'POST', path: '/api/v1/training/sync',
+    action: async () => apiCall('POST', '/api/v1/training/sync', {
+      source: 'GoogleFit',
+      sessions: [{ activityType: 'Running', startTime: '2026-08-30T06:00:00Z', endTime: '2026-08-30T07:00:00Z', calories: 480, distance: 7.5, heartPoints: 38 }]
+    }, athleteToken),
+    validate: r => r.status === 200 && (r.data?.data?.totalSessions > 0 || r.data?.data?.savedSessions?.length > 0 || r.data?.data?.parsedTrainingLog?.totalCalories > 0)
+  },
+  {
+    id: 't-train-plan', name: '16. AI Training Plan (Feature 5)', method: 'POST', path: '/api/v1/training/plan',
+    action: async () => apiCall('POST', '/api/v1/training/plan', {
+      sport: 'Athletics', goal: 'Explosive Power', weight: 78, height: 182
+    }, athleteToken),
+    validate: r => r.status === 200 && (r.data?.data?.weeklySchedule?.length === 7 || r.data?.data?.generatedPlan?.weeklySchedule?.length === 7)
+  },
+  {
+    id: 't-ex-db', name: '17. Exercise Library (Feature 6)', method: 'GET', path: '/api/v1/exercise/database',
+    action: async () => apiCall('GET', '/api/v1/exercise/database', null, athleteToken),
+    validate: r => r.status === 200 && r.data?.data?.length > 0
+  },
+  {
+    id: 't-ex-corr', name: '18. Exercise Form Correction', method: 'POST', path: '/api/v1/exercise/analyze',
+    action: async () => apiCall('POST', '/api/v1/exercise/analyze', {
+      exerciseName: 'Squats', formScore: 82
+    }, athleteToken),
+    validate: r => r.status === 200 && r.data?.data?.correctionReport?.grade === 'Good'
+  },
+  {
+    id: 't-ai-train', name: '19. AI Chat → Training Coach (Feature 7)', method: 'POST', path: '/api/v1/ai-assistant/chat',
+    action: async () => apiCall('POST', '/api/v1/ai-assistant/chat', { message: 'How should I warm up for a sprint race?' }, athleteToken),
+    validate: r => r.status === 200 && r.data?.data?.agentType === 'training'
+  },
+  {
+    id: 't-ai-nutr', name: '20. AI Chat → Nutrition Agent (Feature 7)', method: 'POST', path: '/api/v1/ai-assistant/chat',
+    action: async () => apiCall('POST', '/api/v1/ai-assistant/chat', { message: 'How many grams of protein should I eat daily?' }, athleteToken),
+    validate: r => r.status === 200 && r.data?.data?.agentType === 'nutrition'
+  },
+  {
+    id: 't-err-401', name: '21. Security — 401 on Missing Token', method: 'GET', path: '/api/v1/athletes/fake_id',
+    action: async () => apiCall('GET', '/api/v1/athletes/fake_id', null, 'invalid_token'),
+    validate: r => r.status === 401
+  }
+];
+
+function renderTestCards() {
+  const container = document.getElementById('testCardsContainer');
+  container.innerHTML = '';
+  TEST_DEFINITIONS.forEach(t => {
+    const card = document.createElement('div');
+    card.className = 'test-card pending';
+    card.id = `card-${t.id}`;
+    card.innerHTML = `
+      <div class="test-header" onclick="document.getElementById('body-${t.id}').classList.toggle('open')">
+        <div class="test-meta">
+          <span class="method-tag method-${t.method}">${t.method}</span>
+          <span class="test-title">${t.name}</span>
+        </div>
+        <div class="test-status" id="status-${t.id}">⏳ Ready</div>
+      </div>
+      <div class="test-body" id="body-${t.id}">
+        <div class="endpoint-pill">${t.method} ${t.path}</div>
+        <pre id="pre-${t.id}">Click "Run All Tests" to execute...</pre>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+async function runAutomatedSuite() {
+  const btn = document.getElementById('runAllBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Running Suite...';
+
+  const tStart = Date.now();
+  let passed = 0;
+  let failed = 0;
+
+  renderTestCards();
+
+  for (const t of TEST_DEFINITIONS) {
+    const card = document.getElementById(`card-${t.id}`);
+    const status = document.getElementById(`status-${t.id}`);
+    const pre = document.getElementById(`pre-${t.id}`);
+
+    card.className = 'test-card running';
+    status.innerHTML = '<span class="spinner"></span> Running';
+
+    const t0 = Date.now();
+    let res;
+    let ok = false;
+    try {
+      res = await t.action();
+      ok = t.validate(res);
+    } catch (err) {
+      res = {
+        error: err.message,
+        hint: err.message.includes('fetch')
+          ? 'Network or CORS error. Ensure server is running (npm start) and open the dashboard via http://localhost:3000/test-dashboard/'
+          : undefined
+      };
+      ok = false;
+    }
+    const elapsed = Date.now() - t0;
+
+    pre.textContent = JSON.stringify(res.data || res, null, 2);
+
+    if (ok) {
+      card.className = 'test-card pass';
+      status.textContent = `✅ PASS (${elapsed}ms)`;
+      passed++;
+    } else {
+      card.className = 'test-card fail';
+      status.textContent = `❌ FAIL (${elapsed}ms)`;
+      failed++;
+    }
+  }
+
+  const duration = Date.now() - tStart;
+  document.getElementById('statPassed').textContent = passed;
+  document.getElementById('statFailed').textContent = failed;
+  document.getElementById('statTotal').textContent = TEST_DEFINITIONS.length;
+  document.getElementById('statTime').textContent = duration + 'ms';
+
+  btn.disabled = false;
+  btn.textContent = '▶ Run All 20+ Tests';
+}
+
+renderTestCards();
+</script>
+</body>
+</html>
